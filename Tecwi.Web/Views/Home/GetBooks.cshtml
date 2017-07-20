@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Tecwi.Web.Models.BookViewModel>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AuthorName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.EditorFor(modelItem => item.Title, new { htmlAttributes = new { id = "bookTitle" + item.Id } })
+            </td>
+            <td>
+                @Html.EditorFor(modelItem => item.Description, new { htmlAttributes = new { id = "bookDescription" + item.Id } })
+            </td>
+            <td>
+                @Html.EditorFor(modelItem => item.Date, new { @type = "date", htmlAttributes = new { id = "bookDate" + item.Id } })
+            </td>
+            <td>
+                @Html.EditorFor(modelItem => item.AuthorName, new { htmlAttributes = new { id = "bookAuthorName" + item.Id } })
+            </td>
+            <td>
+                <button type="button" class="btn btn-success" onclick="edit(@item.Id)">Edit</button>
+                @Ajax.ActionLink("Delete", "DeleteBook", new { id = item.Id }, new AjaxOptions { UpdateTargetId = "tabledata" }, new { @class = "btn btn-success" })
+            </td>
+        </tr>
+    }
+
+</table>
+<script>
+    function edit(id) {
+        var title = document.getElementById('bookTitle' + id).value;
+        var description = document.getElementById('bookDescription' + id).value;
+        var date = document.getElementById('bookDate' + id).value;
+        var authorName = document.getElementById('bookAuthorName' + id).value;
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("EditBook")",
+            data: JSON.stringify({
+                Id: id,
+                Title: title,
+                Description: description,
+                Date: date,
+                AuthorName: authorName
+            }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) { alert(`${authorName} is updated`) },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('An error occurred on the server');
+            }
+        });
+    }
+</script>

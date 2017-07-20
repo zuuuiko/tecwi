@@ -3,29 +3,69 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h2 id="addBookHeader">Add books</h2>
+    @using (Ajax.BeginForm(null, null, new AjaxOptions
+    {
+        UpdateTargetId = "tabledata",
+        Url = Url.Action("AddBook"),
+        OnFailure = "onError",
+        OnSuccess = "clearAddForm"
+    }, new { @class = "form-inline", id = "addForm" }))
+    {
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" name="Title" id="title">
+        </div>
+        <div class="form-group">
+            <label for="authorName">Author's name</label>
+            <input type="text" class="form-control" name="AuthorName" id="authorName">
+        </div>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" class="form-control" name="Date" id="date">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" rows="3" name="Description" id="description"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Add new book</button>
+
+    }
+    <hr/>
+    <h2 id="searhBookHeader">Search books</h2>
+    @using (Ajax.BeginForm(null, null, new AjaxOptions
+    {
+        UpdateTargetId = "tabledata",
+        Url = Url.Action("GetBooks"),
+        LoadingElementId = "loadingIndicator",
+        OnSuccess = "clearSearchForm"
+    }, new { id = "searchForm" }))
+    {
+        <input name="title" placeholder="Title" />
+        <input name="authorName" placeholder="Author's name" />
+        <input type="submit" value="Search" class="btn btn-success" />
+    }
+    <hr />
+    <h2 id="listBookHeader">Books</h2>
+    <div id="tabledata">
+        <img id="loadingIndicator" style="display:none;" src="@Url.Content("~/Content/datas_loading.gif")" />
+        @Html.Action("GetBooks")
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        function onError(ex) {
+            alert('An error occurred on the server');
+        }
+        function clearAddForm() {
+            document.getElementById('addForm').reset();
+        }
+        function clearSearchForm() {
+            document.getElementById('searchForm').reset();
+        }
+    </script>
+}
