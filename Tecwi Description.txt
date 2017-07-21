@@ -1,0 +1,36 @@
+The application consists of four projects:
+	1) data access layer 	- Tecwi.DAL;
+	2) business logic layer - Tecwi.BLL;
+	3) presentation layer	- Tecwi.Web;
+      + 4) unit tests for business logic - Tecwi.BLL.Tests
+
+Each layer contains its own models that are mapped using AutoMapper library.
+
+DAL and BLL provides an interface with a set of methods needed for the next layer.
+
+DAL provides an IUnitOfWork interface that agregate all repositories which implement 
+IRepository<T> interface (dependency inversion SOLID principle).
+	
+IRepository<T> provides unified interface for working with datas:
+	List<T> GetAll()	- select all T entities from repository;
+        T Get(int id)		- select entity by id;
+        List<T> Find(Func<T, Boolean> predicate); - select entities which 
+						    correspond to a certain condition;
+        void Create(T item);	- insert entity to repository;
+        void Update(T item);	- update entity in repository;
+        void Delete(int id);	- delete entity from repository;
+
+BLL uses DAL, provides IDataService interface for presentation layer. 
+DataService has IUnitOfWork (dependency inversion). The concrete type of IUnitOfWork 
+is injected into DataService with using Ninject library and DIServiceModule class -
+the place where the configuration is performed. 
+
+Presentation layer is a single page where: 
+	1) you can add a new book;
+	2) a list of all books is displayed with the ability to edit and delete the book;
+	3) you can display the list of books found by title and author.
+
+All actions are performed without reloading the page due to the use of AJAX technology.
+PL uses BLL. HomeController has IDataService (dependency inversion). The concrete type of 
+IDataService is injected into HomeController via NinjectDependencyResolver class which is 
+registered and binded with BLL's DIServiceModule in NinjectWebCommon class.
